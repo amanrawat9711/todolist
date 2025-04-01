@@ -40,33 +40,47 @@ function App() {
 
   return (
     <>
-      <div className="min-h-screen flex flex-col items-center justify-center">
-      <div 
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6">
+        {/* Background */}
+        <div
           className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
           style={{ backgroundImage: `url(${images})` }}
         ></div>
-        <div className="border-2 p-10 border-pink-800">
-        <div className="flex items-center gap-5 w-full max-w-xl">
-          <input
-            className=" border-pink-800 border-2 text-center w-full h-[40px] text-pink-700"
-            type="text"
-            placeholder="Enter a new task"
-            onChange={(e) => setInput(e.target.value)}
-            value={input}
-          />
-          <button className="cursor-pointer text-pink-500 border rounded-full"  onClick={addTask}><IoAdd/></button>
-        </div>
-        <div className="max-w-xl min-w-md w-full mt-5 ">
-          {todo.map((item, index) => (
-            <div
-              className="mt-2 border-2 border-pink-800 flex justify-between items-center p-2 w-full"
-              key={index}
+
+        {/* Container */}
+        <div className="border-2 p-5 sm:p-10 border-pink-800 bg-white bg-opacity-80 w-full max-w-lg rounded-lg shadow-lg z-10">
+          {/* Input and Add Button */}
+          <div className="flex items-center gap-3 w-full">
+            <input
+              className="border-2 border-pink-800 text-center w-full h-[40px] text-pink-700 rounded-md px-3"
+              type="text"
+              placeholder="Enter a new task"
+              onChange={(e) => setInput(e.target.value)}
+              value={input}
+            />
+            <button
+              className="cursor-pointer text-pink-500 border border-pink-500 rounded-full p-2 hover:bg-pink-100"
+              onClick={addTask}
             >
-              <p className="break-words w-3/4 text-pink-700">{item}</p>
-              <MdDelete className="text-red-500 cursor-pointer mr-[50px]" onClick={()=>deleteTodo(index)} />
-            </div>
-          ))}
-        </div>
+              <IoAdd size={20} />
+            </button>
+          </div>
+
+          {/* Task List */}
+          <div className="max-w-full w-full mt-5 space-y-3">
+            {todo.map((item, index) => (
+              <div
+                className="border-2 border-pink-800 flex justify-between items-center p-2 w-full rounded-md"
+                key={index}
+              >
+                <p className="break-words w-4/5 text-pink-700">{item}</p>
+                <MdDelete
+                  className="text-red-500 cursor-pointer hover:text-red-700 transition-transform transform hover:scale-110"
+                  onClick={() => deleteTodo(index)}
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       <ToastContainer />
