@@ -5,10 +5,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { MdDelete } from "react-icons/md";
 import { images } from "./assets/assets";
 import { IoAdd } from "react-icons/io5";
+import { FaRegEdit } from "react-icons/fa";
+import { CiSaveUp1 } from "react-icons/ci";
 
 function App() {
   const [todo, setTodo] = useState([]);
   const [input, setInput] = useState("");
+  const [currentTaskIndex, setCurrentTaskIndex] = useState(null);
 
   const addTask = () => {
     if (input.trim()) {
@@ -23,6 +26,7 @@ function App() {
   const deleteTodo = (indexToDelete) => {
     const result = todo.filter((_, index) => index !== indexToDelete);
     setTodo(result);
+    localStorage.setItem("todo", JSON.stringify(result));
   };
 
   useEffect(() => {
@@ -38,18 +42,28 @@ function App() {
     }
   }, [todo]);
 
+  const updateTodo = (index, newTaskText) => {
+    if (newTaskText.trim()) {
+      const updatedTodo = todo.map((task, idx) =>
+        idx === index ? newTaskText : task
+      );
+      setTodo(updatedTodo);
+      setCurrentTaskIndex(null); 
+      toast.success("Task updated successfully!");
+    } else {
+      toast.error("Task cannot be empty!");
+    }
+  };
+
   return (
     <>
       <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6">
-        {/* Background */}
         <div
           className="absolute inset-0 bg-cover bg-center opacity-30 pointer-events-none"
           style={{ backgroundImage: `url(${images})` }}
         ></div>
 
-        {/* Container */}
         <div className="border-2 p-5 sm:p-10 border-pink-800 bg-white bg-opacity-80 w-full max-w-lg rounded-lg shadow-lg z-10">
-          {/* Input and Add Button */}
           <div className="flex items-center gap-3 w-full">
             <input
               className="border-2 border-pink-800 text-center w-full h-[40px] text-pink-700 rounded-md px-3"
@@ -66,14 +80,36 @@ function App() {
             </button>
           </div>
 
-          {/* Task List */}
           <div className="max-w-full w-full mt-5 space-y-3">
             {todo.map((item, index) => (
               <div
                 className="border-2 border-pink-800 flex justify-between items-center p-2 w-full rounded-md"
                 key={index}
               >
-                <p className="break-words w-4/5 text-pink-700">{item}</p>
+                {currentTaskIndex === index ? (
+                  <div
+                    className="w-4/5 text-pink-700"
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => updateTodo(index, e.target.innerText)} 
+                    dangerouslySetInnerHTML={{ __html: item }}
+                  />
+                ) : (
+                  <p className="break-words w-4/5 text-pink-700">{item}</p>
+                )}
+                {currentTaskIndex === index ? (
+                  <CiSaveUp1
+                    onClick={() => setCurrentTaskIndex(null)} 
+                    className="text-green-500 cursor-pointer"
+                  />
+                ) : (
+                  <FaRegEdit
+                    onClick={() => setCurrentTaskIndex(index)} 
+                    className="text-red-700 cursor-pointer"
+                  />
+                )}
+
+                {/* Delete Button */}
                 <MdDelete
                   className="text-red-500 cursor-pointer hover:text-red-700 transition-transform transform hover:scale-110"
                   onClick={() => deleteTodo(index)}
